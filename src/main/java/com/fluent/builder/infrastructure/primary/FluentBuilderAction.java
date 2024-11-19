@@ -1,4 +1,4 @@
-package com.fluent.builder;
+package com.fluent.builder.infrastructure.primary;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

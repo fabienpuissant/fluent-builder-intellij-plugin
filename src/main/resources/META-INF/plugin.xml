@@ -33,7 +33,7 @@
 
 
     <actions>
-        <action id="FluentBuilderAction" class="com.fluent.builder.FluentBuilderAction" text="Fluent Builder" description="Generate a Fluent Builder">
+        <action id="FluentBuilderAction" class="com.fluent.builder.infrastructure.primary.FluentBuilderAction" text="Fluent Builder" description="Generate a Fluent Builder">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift B"/>
         </action>

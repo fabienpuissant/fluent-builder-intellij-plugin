@@ -1,5 +1,6 @@
-package com.fluent.builder;
+package com.fluent.builder.infrastructure.primary;
 
+import com.fluent.builder.application.FluentBuilderApplicationService;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
 import com.intellij.ui.components.JBScrollPane;
@@ -14,6 +15,8 @@ public class FluentBuilderDialog extends DialogWrapper {
     private JTable fieldsTable;
 
     private final PsiClass targetClass;
+
+    private final FluentBuilderApplicationService builder = new FluentBuilderApplicationService();
 
     public FluentBuilderDialog(PsiClass targetClass) {
         super(true);
@@ -39,7 +42,6 @@ public class FluentBuilderDialog extends DialogWrapper {
         FieldsTableModel model = (FieldsTableModel) fieldsTable.getModel();
         List<FieldData> fields = model.getFields();
 
-        FluentBuilderGenerator generator = new FluentBuilderGenerator(targetClass, fields);
-        generator.generate();
+        builder.generateBuilder(targetClass, fields);
     }
 }

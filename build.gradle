@@ -1,4 +1,3 @@
-
 plugins {
     id("java") // Plugin Java
     id("org.jetbrains.intellij") version "1.17.4"
@@ -10,20 +9,26 @@ intellij {
     plugins = ["java"]
 }
 
-
 repositories {
     mavenCentral()
     maven { url = uri("https://plugins.jetbrains.com/maven") }
 }
 
-
 dependencies {
-    // Dépendances principales pour le plugin
+    // Main dependencies for the plugin
     implementation("org.jetbrains:annotations:24.0.1")
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.opentest4j:opentest4j:1.3.0")
+    // JUnit 5 dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
 
+    // AssertJ for fluent assertions
+    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+    testImplementation('org.junit.platform:junit-platform-console-standalone:1.11.3')
+}
+
+sourceSets {
 }
 
 sourceSets {
@@ -37,10 +42,10 @@ sourceSets {
 
 tasks {
 
-    // Configuration des tests
+    // Configure tests
     test {
         jvmArgs = ["-Djava.security.manager=allow"]
-        useJUnit()
+        useJUnitPlatform() // Ensures JUnit 5 is used
     }
 
     runIde {

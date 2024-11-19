@@ -1,4 +1,4 @@
-package com.fluent.builder;
+package com.fluent.builder.infrastructure.primary;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
@@ -8,12 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FieldsTableModel extends AbstractTableModel {
+
+    //TODO check
+    // https://github.com/Powershooter83/SealedFluentBuilder/blob/main/src/main/java/me/prouge/sealedfluentbuilder/panels/FieldSelectionPanel.java
+    // https://github.com/Powershooter83/SealedFluentBuilder/blob/main/src/main/java/me/prouge/sealedfluentbuilder/panels/FieldArrangementPanel.java
+
     private final String[] columnNames = {"Field", "Type", "Optional"};
     private final List<FieldData> fields = new ArrayList<>();
 
     public FieldsTableModel(PsiClass psiClass) {
         for (PsiField field : psiClass.getAllFields()) {
-            fields.add(new FieldData(field.getName(), field.getType().getPresentableText(), false));
+            fields.add(FieldData.builder()
+                    .name(field.getName())
+                    .type(field.getType().getPresentableText())
+                    .isOptional(false)
+            );
         }
     }
 
@@ -32,9 +41,9 @@ public class FieldsTableModel extends AbstractTableModel {
         FieldData field = fields.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return field.getName();
+                return field.name();
             case 1:
-                return field.getType();
+                return field.type();
             case 2:
                 return field.isOptional();
             default:
@@ -50,7 +59,8 @@ public class FieldsTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 2) {
-            fields.get(rowIndex).setOptional((Boolean) aValue);
+            //TODO Immutable dont setOptional here
+            //fields.get(rowIndex).setOptional((Boolean) aValue);
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
