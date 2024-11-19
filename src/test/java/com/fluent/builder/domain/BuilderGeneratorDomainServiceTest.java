@@ -27,7 +27,7 @@ class BuilderGeneratorDomainServiceTest {
     @Test
     void test() {
         builder.generateBuilder(new BuilderClass());
-        verify(builderPort).generateBuilder(new ItemsToBuild());
+        verify(builderPort).generateBuilder(new BuilderClass());
     }
 
 }

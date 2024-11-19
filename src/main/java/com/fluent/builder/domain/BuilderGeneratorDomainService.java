@@ -11,6 +11,6 @@ public class BuilderGeneratorDomainService {
     }
 
     public void generateBuilder(BuilderClass builderClass) {
-        builderPort.generateBuilder();
+        builderPort.generateBuilder(new BuilderClass());
     }
 }
