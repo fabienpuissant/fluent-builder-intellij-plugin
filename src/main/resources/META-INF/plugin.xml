@@ -5,7 +5,7 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Fluent-builder</name>
+    <name>Fluent Builder</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="fabienpuissant9@gmail.com">Fabien Puissant</vendor>
@@ -14,8 +14,31 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    <p>The <strong>IntelliJ Fluent Builder Plugin</strong> is your go-to solution for generating and managing fluent builders in Java projects.</p>
+
+    <h4>Key Features:</h4>
+    <ol>
+        <li><strong>Effortless Fluent Builder Creation</strong><br>
+            Quickly generate fluent builders for your classes with minimal effort, following a clean and intuitive design.</li>
+        <li><strong>Highly Adaptable Builders</strong><br>
+            Customize your builder to fit your exact needs:
+            <ul>
+                <li>Modify parameter types or names.</li>
+                <li>Remove parameters to simplify your builder.</li>
+                <li>Make parameters optional to suit different use cases.</li>
+                <li>Reorder parameters for better readability and usability.</li>
+            </ul>
+            The plugin automatically adjusts the builder interfaces and methods to reflect your changes, ensuring a consistent and reliable builder.</li>
+        <li><strong>Seamless Compatibility with Existing Code</strong><br>
+            The plugin adheres to established naming conventions to ensure compatibility with your existing project:
+            <ul>
+                <li><strong>Builder Class Names</strong>: <code>ClassNameBuilder</code></li>
+                <li><strong>Builder Interface Names</strong>: <code>ClassNameParamBuilder</code></li>
+            </ul>
+            This ensures that your generated builders integrate seamlessly into your current workflow.</li>
+    </ol>
+
+    <p><em>Need help or have suggestions? Feel free to reach out.</em></p>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -26,14 +49,16 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <applicationService
+                serviceInterface="com.fluent.builder.infrastructure.secondary.PsiClassService"
+                serviceImplementation="com.fluent.builder.infrastructure.secondary.PsiClassServiceImpl"/>
     </extensions>
 
     <depends>com.intellij.java</depends>
 
 
     <actions>
-        <action id="FluentBuilderAction" class="com.fluent.builder.FluentBuilderAction" text="Fluent Builder" description="Generate a Fluent Builder">
+        <action id="FluentBuilderAction" class="com.fluent.builder.infrastructure.primary.FluentBuilderAction" text="Fluent Builder" description="Generate a Fluent Builder">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift B"/>
         </action>

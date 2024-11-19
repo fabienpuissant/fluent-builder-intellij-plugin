@@ -1,46 +1,59 @@
-
 plugins {
-    id("java") // Plugin Java
-    id("org.jetbrains.intellij") version "1.17.4"
-}
-
-intellij {
-    version = "2024.3"
-    type = "IC"
-    plugins = ["java"]
+    id("java")
+    id("org.jetbrains.intellij.platform") version "2.1.0"
 }
 
 
 repositories {
-    mavenCentral()
-    maven { url = uri("https://plugins.jetbrains.com/maven") }
+    intellijPlatform {
+        defaultRepositories()
+        mavenCentral()
+    }
 }
 
-
 dependencies {
-    // Dépendances principales pour le plugin
-    implementation("org.jetbrains:annotations:24.0.1")
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.opentest4j:opentest4j:1.3.0")
+    intellijPlatform {
+        intellijIdeaCommunity("2024.3")
 
+        bundledPlugin("com.intellij.java")
+
+
+        pluginVerifier()
+        zipSigner()
+        instrumentationTools()
+
+    }
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+    testImplementation('org.junit.platform:junit-platform-console-standalone:1.11.3')
+}
+
+sourceSets {
 }
 
 sourceSets {
     main {
-        java.srcDirs("src/main/java")
+        java.srcDirs("src/main")
     }
     test {
-        java.srcDirs("src/test/java")
+        java.srcDirs("src/test")
+
+        resources {
+            srcDir 'src/test/resources'
+        }
     }
 }
 
 tasks {
 
-    // Configuration des tests
+    // Configure tests
     test {
         jvmArgs = ["-Djava.security.manager=allow"]
-        useJUnit()
+        useJUnitPlatform() // Ensures JUnit 5 is used
     }
 
     runIde {

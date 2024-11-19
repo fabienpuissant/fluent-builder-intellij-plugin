@@ -1,1 +1,5 @@
-rootProject.name = "fluent-builder"
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
