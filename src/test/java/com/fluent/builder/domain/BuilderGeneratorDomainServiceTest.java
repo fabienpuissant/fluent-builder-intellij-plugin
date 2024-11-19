@@ -2,6 +2,7 @@ package com.fluent.builder.domain;
 
 
 import com.fluent.builder.infrastructure.secondary.FluentBuilderGenerator;
+import com.fluent.builder.infrastructure.secondary.ItemsToBuild;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ class BuilderGeneratorDomainServiceTest {
     @Test
     void test() {
         builder.generateBuilder(new BuilderClass());
-        verify(builderPort).generateBuilder();
+        verify(builderPort).generateBuilder(new ItemsToBuild());
     }
 
 }

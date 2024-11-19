@@ -1,7 +1,6 @@
 package com.fluent.builder.domain;
 
 
-import com.fluent.builder.infrastructure.secondary.FluentBuilderGenerator;
 
 public class BuilderGeneratorDomainService {
 
