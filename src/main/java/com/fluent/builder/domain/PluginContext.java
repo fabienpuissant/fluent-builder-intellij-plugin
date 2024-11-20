@@ -1,4 +1,4 @@
-package com.fluent.builder.infrastructure.primary;
+package com.fluent.builder.domain;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;

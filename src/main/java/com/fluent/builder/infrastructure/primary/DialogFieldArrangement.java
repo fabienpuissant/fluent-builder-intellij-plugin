@@ -1,11 +1,11 @@
 package com.fluent.builder.infrastructure.primary;
 
 import com.fluent.builder.application.FluentBuilderApplicationService;
+import com.fluent.builder.domain.PluginContext;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiField;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
@@ -107,7 +107,7 @@ public class DialogFieldArrangement extends DialogWrapper {
         List<PsiField> selectedFields = getFields();
 
         super.doOKAction();
-        builder.generateBuilder(context, new Fields(selectedFields, getOptionalFields()));
+        builder.generateBuilder(context, selectedFields, getOptionalFields());
     }
 
     private void moveFields(JList<PsiField> sourceList, DefaultListModel<PsiField> sourceModel, DefaultListModel<PsiField> targetModel) {

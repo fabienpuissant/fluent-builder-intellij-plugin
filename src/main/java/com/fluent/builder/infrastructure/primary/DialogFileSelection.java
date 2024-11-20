@@ -1,12 +1,12 @@
 package com.fluent.builder.infrastructure.primary;
 
+import com.fluent.builder.domain.PluginContext;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
 
 import javax.swing.*;
 
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiField;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.ToolbarDecorator;

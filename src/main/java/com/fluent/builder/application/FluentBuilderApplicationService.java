@@ -1,10 +1,13 @@
 package com.fluent.builder.application;
 
-import com.fluent.builder.domain.BuilderClass;
+import com.fluent.builder.domain.Fields;
+import com.fluent.builder.domain.FluentBuilderParameters;
 import com.fluent.builder.domain.BuilderGeneratorDomainService;
-import com.fluent.builder.infrastructure.primary.Fields;
-import com.fluent.builder.infrastructure.primary.PluginContext;
+import com.fluent.builder.domain.PluginContext;
 import com.fluent.builder.infrastructure.secondary.FluentBuilderGenerator;
+import com.intellij.psi.PsiField;
+
+import java.util.List;
 
 public class FluentBuilderApplicationService {
 
@@ -14,10 +17,12 @@ public class FluentBuilderApplicationService {
         this.builder = new BuilderGeneratorDomainService(new FluentBuilderGenerator());
     }
 
-    public void generateBuilder(PluginContext context, Fields fields) {
-        //TODO convert target class and fields into
-        BuilderClass builderClass = new BuilderClass();
-        builder.generateBuilder(builderClass);
+    public void generateBuilder(PluginContext context, List<PsiField> mandatoryFields, List<PsiField> optionalFields) {
+        builder.generateBuilder(FluentBuilderParameters.builder()
+                .context(context)
+                .mandatoryParameters(new Fields(mandatoryFields))
+                .optionalParameters(new Fields(optionalFields))
+        );
     }
 
 }

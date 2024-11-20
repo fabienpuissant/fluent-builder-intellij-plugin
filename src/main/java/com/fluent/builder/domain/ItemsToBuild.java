@@ -1,6 +1,4 @@
-package com.fluent.builder.infrastructure.secondary;
-
-import com.fluent.builder.domain.FluentBuilderParameters;
+package com.fluent.builder.domain;
 
 
 public class ItemsToBuild {

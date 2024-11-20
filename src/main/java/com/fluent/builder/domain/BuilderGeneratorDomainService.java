@@ -10,7 +10,7 @@ public class BuilderGeneratorDomainService {
         this.builderPort = builderPort;
     }
 
-    public void generateBuilder(BuilderClass builderClass) {
-        builderPort.generateBuilder(new BuilderClass());
+    public void generateBuilder(FluentBuilderParameters fluentBuilderParameters) {
+        builderPort.generateBuilder(null);
     }
 }
