@@ -1,4 +1,4 @@
-public class Test {
+public class EmptyClass {
 
     private String firstname;
     private String lastlame;

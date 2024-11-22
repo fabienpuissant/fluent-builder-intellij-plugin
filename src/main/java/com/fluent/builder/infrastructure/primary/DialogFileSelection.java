@@ -1,6 +1,6 @@
 package com.fluent.builder.infrastructure.primary;
 
-import com.fluent.builder.domain.PluginContext;
+import com.fluent.builder.domain.ExistingClass;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
 

@@ -1,7 +1,7 @@
 package com.fluent.builder.infrastructure.primary;
 
 import com.fluent.builder.application.FluentBuilderApplicationService;
-import com.fluent.builder.domain.PluginContext;
+import com.fluent.builder.domain.ExistingClass;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

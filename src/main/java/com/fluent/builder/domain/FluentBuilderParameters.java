@@ -1,7 +1,7 @@
 package com.fluent.builder.domain;
 
 public class FluentBuilderParameters {
-    private final PluginContext context;
+    private final ExistingClass existingClass;
     private final Fields mandatoryParameters;
     private final Fields optionalParameters;
 
@@ -9,8 +9,8 @@ public class FluentBuilderParameters {
         return new FluentBuilderParametersBuilder();
     }
 
-    public PluginContext context() {
-        return context;
+    public ExistingClass context() {
+        return existingClass;
     }
 
     public Fields mandatoryParameters() {
@@ -24,7 +24,7 @@ public class FluentBuilderParameters {
     private FluentBuilderParameters(FluentBuilderParametersBuilder builder) {
         if(builder.context == null || builder.mandatoryParameters == null || builder.optionalParameters == null) throw new IllegalStateException();
 
-        context = builder.context;
+        existingClass = builder.context;
         mandatoryParameters = builder.mandatoryParameters;
         optionalParameters = builder.optionalParameters;
     }
@@ -33,13 +33,13 @@ public class FluentBuilderParameters {
         FluentBuilderParametersContextBuilder,
         FluentBuilderParametersMandatoryParametersBuilder,
         FluentBuilderParametersOptionalParametersBuilder {
-        private PluginContext context;
+        private ExistingClass context;
         private Fields mandatoryParameters;
         private Fields optionalParameters;
 
 
         @Override
-        public FluentBuilderParametersMandatoryParametersBuilder context(PluginContext context) {
+        public FluentBuilderParametersMandatoryParametersBuilder context(ExistingClass context) {
             this.context = context;
 
             return this;
@@ -60,15 +60,15 @@ public class FluentBuilderParameters {
         }
     }
 
-    public interface FluentBuilderParametersContextBuilder {
-        FluentBuilderParametersMandatoryParametersBuilder context(PluginContext context);
+    public sealed interface FluentBuilderParametersContextBuilder permits FluentBuilderParametersBuilder {
+        FluentBuilderParametersMandatoryParametersBuilder context(ExistingClass context);
     }
 
-    public interface FluentBuilderParametersMandatoryParametersBuilder {
+    public sealed interface FluentBuilderParametersMandatoryParametersBuilder permits FluentBuilderParametersBuilder {
         FluentBuilderParametersOptionalParametersBuilder mandatoryParameters(Fields mandatoryParameters);
     }
 
-    public interface FluentBuilderParametersOptionalParametersBuilder {
+    public sealed interface FluentBuilderParametersOptionalParametersBuilder permits FluentBuilderParametersBuilder {
         FluentBuilderParameters optionalParameters(Fields optionalParameters);
     }
 

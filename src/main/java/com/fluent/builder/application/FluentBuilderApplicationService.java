@@ -1,9 +1,8 @@
 package com.fluent.builder.application;
 
-import com.fluent.builder.domain.Fields;
-import com.fluent.builder.domain.FluentBuilderParameters;
-import com.fluent.builder.domain.BuilderGeneratorDomainService;
-import com.fluent.builder.domain.PluginContext;
+import com.fluent.builder.domain.*;
+import com.fluent.builder.infrastructure.primary.FluentBuilderParametersMapper;
+import com.fluent.builder.infrastructure.primary.PluginContext;
 import com.fluent.builder.infrastructure.secondary.FluentBuilderGenerator;
 import com.intellij.psi.PsiField;
 
@@ -18,11 +17,7 @@ public class FluentBuilderApplicationService {
     }
 
     public void generateBuilder(PluginContext context, List<PsiField> mandatoryFields, List<PsiField> optionalFields) {
-        builder.generateBuilder(FluentBuilderParameters.builder()
-                .context(context)
-                .mandatoryParameters(new Fields(mandatoryFields))
-                .optionalParameters(new Fields(optionalFields))
-        );
+        builder.generateBuilder(FluentBuilderParametersMapper.toDomain(context, mandatoryFields, optionalFields));
     }
 
 }

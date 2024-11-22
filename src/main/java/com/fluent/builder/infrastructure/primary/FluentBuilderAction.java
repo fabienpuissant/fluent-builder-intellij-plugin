@@ -1,6 +1,6 @@
 package com.fluent.builder.infrastructure.primary;
 
-import com.fluent.builder.domain.PluginContext;
+import com.fluent.builder.domain.ExistingClass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
