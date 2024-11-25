@@ -1,52 +1,67 @@
 package com.fluent.builder.domain;
 
-public record Method(String signature, String content) {
-    public Method(final String signature, final String content) {
-        this.signature = signature;
-        this.content = content;
+public class Method {
+
+    private final String signature;
+    private final String content;
+    private final boolean shouldOverride;
+
+    private Method(MethodBuilder builder) {
+        if(builder.signature == null || builder.content == null) throw new IllegalStateException();
+
+        this.signature = builder.signature;
+        this.content = builder.content;
+        this.shouldOverride = Boolean.TRUE.equals(builder.shouldOverride);
     }
 
-    public static ContentBuilder signature(final String signature) {
-        return new Builder().signature(signature);
+    public static MethodSignatureBuilder builder() {
+        return new MethodBuilder();
     }
 
-    public sealed interface ContentBuilder permits Builder {
-
-        MethodCreator content(final String content);
-
+    public sealed interface MethodSignatureBuilder permits MethodBuilder {
+        MethodContentBuilder signature(final String signature);
     }
 
-    public sealed interface MethodCreator permits Builder {
-
-        Method build();
-
+    public sealed interface MethodContentBuilder permits MethodBuilder {
+        MethodBuilder content(final String content);
     }
 
-    private static final class Builder implements ContentBuilder, MethodCreator {
+    public sealed interface MethodShouldOverrideBuilder permits MethodBuilder {
+        Method shouldOverride(final boolean shouldOverride);
+    }
+
+    public static final class MethodBuilder implements MethodSignatureBuilder, MethodContentBuilder, MethodShouldOverrideBuilder {
 
         private String signature;
-
         private String content;
+        private boolean shouldOverride;
 
-        private Builder() {
+        private MethodBuilder() {
         }
 
-        private ContentBuilder signature(final String signature) {
+        @Override
+        public MethodContentBuilder signature(final String signature) {
             this.signature = signature;
+
             return this;
         }
 
         @Override
-        public MethodCreator content(final String content) {
+        public MethodBuilder content(final String content) {
             this.content = content;
+
             return this;
         }
 
         @Override
-        public Method build() {
-            return new Method(signature, content);
+        public Method shouldOverride(boolean shouldOverride) {
+            this.shouldOverride = shouldOverride;
+
+            return new Method(this);
         }
 
+        public Method build() {
+            return new Method(this);
+        }
     }
-
 }

@@ -1,7 +1,5 @@
 package com.fluent.builder.infrastructure.primary;
 
-
-
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -12,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class FluentBuilderParametersMapperTest  {
+public class FluentInterfaceBuilderParametersMapperTest {
 
     private Project project = mock(Project.class);
 

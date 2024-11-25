@@ -1,7 +1,5 @@
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-
 plugins {
-    id("java") // Plugin Java
+    id("java")
     id("org.jetbrains.intellij.platform") version "2.1.0"
 }
 
@@ -25,14 +23,9 @@ dependencies {
         zipSigner()
         instrumentationTools()
 
-        testFramework(TestFrameworkType.Platform)
     }
 
-    // JUnit 5 dependencies
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
-
-
-    // AssertJ for fluent assertions
     testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
