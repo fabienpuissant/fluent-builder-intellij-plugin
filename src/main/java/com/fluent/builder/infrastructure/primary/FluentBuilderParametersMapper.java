@@ -33,6 +33,7 @@ public class FluentBuilderParametersMapper {
         PsiClass psiClass = context.ownerClass();
         PsiClass builderClass = getBuilder(psiClass);
         return ExistingClass.builder()
+                .className(context.ownerClass().getName())
                 .isBuilderExist(isBuilderExist(psiClass))
                 .existingBuilderFields(existingBuilderFields(psiClass))
                 .interfaces(getInterfaces(psiClass))

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class ExistingClass {
 
+    private String className;
     private boolean isBuilderExist;
     private List<Field> existingBuilderFields;
     private List<Interface> builderInterfaces;
@@ -11,17 +12,22 @@ public class ExistingClass {
     private List<Method> builderMethods;
 
     private ExistingClass(ExistingClassBuilder builder) {
-        if(builder.existingBuilderFields == null || builder.builderInterfaces == null || builder.classMethods == null || builder.builderMethods == null) throw  new IllegalStateException();
+        if(builder.className == null || builder.existingBuilderFields == null || builder.builderInterfaces == null || builder.classMethods == null || builder.builderMethods == null) throw  new IllegalStateException();
 
-        this.isBuilderExist = isBuilderExist;
-        this.existingBuilderFields = existingBuilderFields;
-        this.builderInterfaces = builderInterfaces;
-        this.classMethods = classMethods;
-        this.builderMethods = builderMethods;
+        this.className = builder.className;
+        this.isBuilderExist = builder.isBuilderExist;
+        this.existingBuilderFields = builder.existingBuilderFields;
+        this.builderInterfaces = builder.builderInterfaces;
+        this.classMethods = builder.classMethods;
+        this.builderMethods = builder.builderMethods;
     }
 
-    public static IsBuilderExistBuilder builder() {
+    public static ExistingClassNameBuilder builder() {
         return new ExistingClassBuilder();
+    }
+
+    public sealed interface ExistingClassNameBuilder permits ExistingClassBuilder {
+        IsBuilderExistBuilder className(String className);
     }
 
     public sealed interface IsBuilderExistBuilder permits ExistingClassBuilder {
@@ -44,8 +50,9 @@ public class ExistingClass {
         ExistingClass builderMethods(List<Method> builderMethods);
     }
 
-    private static final class ExistingClassBuilder implements IsBuilderExistBuilder, ExistingBuilderFieldsBuilder, ExistingClassInterfacesBuilder, ExistingClassMethodsBuilder, ExistingClassBuilderMethodsBuilder {
+    private static final class ExistingClassBuilder implements ExistingClassNameBuilder, IsBuilderExistBuilder, ExistingBuilderFieldsBuilder, ExistingClassInterfacesBuilder, ExistingClassMethodsBuilder, ExistingClassBuilderMethodsBuilder {
 
+        private String className;
         private boolean isBuilderExist;
         private List<Field> existingBuilderFields;
         private List<Interface> builderInterfaces;
@@ -53,6 +60,13 @@ public class ExistingClass {
         private List<Method> builderMethods;
 
         private ExistingClassBuilder() {
+        }
+
+        @Override
+        public IsBuilderExistBuilder className(String className) {
+            this.className = className;
+
+            return this;
         }
 
         @Override
@@ -88,6 +102,7 @@ public class ExistingClass {
             this.builderMethods = builderMethods;
             return new ExistingClass(this);
         }
+
     }
 
 

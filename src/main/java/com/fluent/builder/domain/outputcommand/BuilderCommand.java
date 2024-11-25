@@ -1,13 +1,10 @@
 package com.fluent.builder.domain.outputcommand;
 
-public class BuilderCommand {
+public abstract class BuilderCommand {
 
-    private CommandOperation operation;
+    protected CommandSignature signature;
 
-    private CommandScope scope;
-
-    private CommandSignature signature;
-
-    private CommandContent content;
-
+    public BuilderCommand(CommandSignature signature) {
+        this.signature = signature;
+    }
 }

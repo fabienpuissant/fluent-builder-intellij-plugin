@@ -1,6 +1,7 @@
 package com.fluent.builder.domain;
 
 
+import com.fluent.builder.domain.outputcommand.*;
 import com.fluent.builder.infrastructure.secondary.FluentBuilderGenerator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectImpl;
@@ -12,11 +13,17 @@ import com.intellij.psi.util.PsiUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.List;
 
+import static com.fluent.builder.domain.FluentBuilderFixtures.CLASS_NAME;
+import static com.fluent.builder.domain.FluentBuilderFixtures.emptyBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +34,8 @@ class BuilderGeneratorDomainServiceTest {
 
     private BuilderGeneratorDomainService builder;
 
-    private PsiFileFactory psiFileFactory;
+    @Captor
+    private ArgumentCaptor<BuilderCommandOutput> commandOutput;
 
     @BeforeEach
     void setUp() {
@@ -35,18 +43,15 @@ class BuilderGeneratorDomainServiceTest {
     }
 
     @Test
-    void shouldAddBuilderClassIfNotExists() throws IOException {
-        builder.generateBuilder(null);
+    void shouldAddBuilderClassIfNotExists() {
+        builder.generateBuilder(emptyBuilder());
 
-        emptyClass();
-
-        verify(builderPort).generateBuilder(null);
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(CreateCommand.builder()
+                .signature(new CommandSignature("public static final SutBuilder"))
+                .content(new CommandContent(null))
+        );
     }
 
-    private PsiClass emptyClass() throws IOException {
-        String data = new String(getClass().getResourceAsStream("/EmptyClass.java").readAllBytes());
-        PsiFile psiFile = psiFileFactory.createFileFromText("EmptyClass.java", data);
-        return PsiUtil.getTopLevelClass(psiFile);
-    }
 
 }

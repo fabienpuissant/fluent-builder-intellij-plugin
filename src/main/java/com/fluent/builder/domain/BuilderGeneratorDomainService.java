@@ -1,7 +1,5 @@
 package com.fluent.builder.domain;
 
-
-
 public class BuilderGeneratorDomainService {
 
     private final BuilderPort builderPort;
