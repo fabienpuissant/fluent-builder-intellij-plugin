@@ -1,9 +1,14 @@
 package com.fluent.builder.domain;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public record Fields(List<Field> fields) {
     public Fields {
-        if(fields == null) throw new IllegalStateException();
+        assert fields != null;
+    }
+
+    public Fields concat(Fields newFields) {
+        return new Fields(Stream.concat(fields.stream(), newFields.fields().stream()).toList());
     }
 }

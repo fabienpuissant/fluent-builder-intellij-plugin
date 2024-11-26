@@ -2,40 +2,33 @@ package com.fluent.builder.domain;
 
 public class FluentBuilderParameters {
     private final ExistingClass existingClass;
-    private final Fields mandatoryParameters;
-    private final Fields optionalParameters;
+    private final Fields parameters;
+
+    public ExistingClass existingClass() {
+        return existingClass;
+    }
 
     public static FluentBuilderParametersContextBuilder builder() {
         return new FluentBuilderParametersBuilder();
     }
 
-    public ExistingClass context() {
-        return existingClass;
+    public Fields parameters() {
+        return parameters;
     }
 
-    public Fields mandatoryParameters() {
-        return mandatoryParameters;
-    }
-
-    public Fields optionalParameters() {
-        return optionalParameters;
-    }
 
     private FluentBuilderParameters(FluentBuilderParametersBuilder builder) {
-        if(builder.context == null || builder.mandatoryParameters == null || builder.optionalParameters == null) throw new IllegalStateException();
+        assert builder.context != null && builder.mandatoryParameters != null;
 
         existingClass = builder.context;
-        mandatoryParameters = builder.mandatoryParameters;
-        optionalParameters = builder.optionalParameters;
+        parameters = builder.mandatoryParameters;
     }
 
     private static final class FluentBuilderParametersBuilder implements
         FluentBuilderParametersContextBuilder,
-        FluentBuilderParametersMandatoryParametersBuilder,
-        FluentBuilderParametersOptionalParametersBuilder {
+        FluentBuilderParametersMandatoryParametersBuilder {
         private ExistingClass context;
         private Fields mandatoryParameters;
-        private Fields optionalParameters;
 
 
         @Override
@@ -46,17 +39,11 @@ public class FluentBuilderParameters {
         }
 
         @Override
-        public FluentBuilderParametersOptionalParametersBuilder mandatoryParameters(Fields mandatoryParameters) {
+        public FluentBuilderParameters parameters(Fields mandatoryParameters) {
             this.mandatoryParameters = mandatoryParameters;
 
-            return this;
-        }
-
-        @Override
-        public FluentBuilderParameters optionalParameters(Fields optionalParameters) {
-            this.optionalParameters = optionalParameters;
-
             return new FluentBuilderParameters(this);
+
         }
     }
 
@@ -65,11 +52,7 @@ public class FluentBuilderParameters {
     }
 
     public sealed interface FluentBuilderParametersMandatoryParametersBuilder permits FluentBuilderParametersBuilder {
-        FluentBuilderParametersOptionalParametersBuilder mandatoryParameters(Fields mandatoryParameters);
-    }
-
-    public sealed interface FluentBuilderParametersOptionalParametersBuilder permits FluentBuilderParametersBuilder {
-        FluentBuilderParameters optionalParameters(Fields optionalParameters);
+        FluentBuilderParameters parameters(Fields mandatoryParameters);
     }
 
 }

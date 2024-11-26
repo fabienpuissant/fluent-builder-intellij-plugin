@@ -7,8 +7,16 @@ public class Interface {
     private final String name;
     private final List<String> signatures;
 
+    public String name() {
+        return name;
+    }
+
+    public List<String> signatures() {
+        return signatures;
+    }
+
     private Interface(InterfaceBuilder builder) {
-        if(builder.name == null || builder.signatures == null) throw new IllegalStateException();
+        assert builder.name != null && builder.signatures != null;
 
         this.name = builder.name;
         this.signatures = builder.signatures;

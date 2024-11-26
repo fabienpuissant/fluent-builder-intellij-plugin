@@ -1,9 +1,7 @@
 package com.fluent.builder.infrastructure.primary;
 
 import com.fluent.builder.domain.*;
-import com.intellij.lang.jvm.JvmModifier;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FluentBuilderParametersMapper {
 
@@ -21,12 +18,16 @@ public class FluentBuilderParametersMapper {
     public static FluentBuilderParameters toDomain(PluginContext context, List<PsiField> mandatoryFields, List<PsiField> optionalFields) {
         return FluentBuilderParameters.builder()
                 .context(mapContext(context))
-                .mandatoryParameters(mapFields(mandatoryFields))
-                .optionalParameters(mapFields(optionalFields));
+                .parameters(mapFields(mandatoryFields, true).concat(mapFields(optionalFields, false)));
     }
 
-    private static Fields mapFields(List<PsiField> mandatoryFields) {
-        return null;
+    private static Fields mapFields(List<PsiField> fields, boolean isOptional) {
+        return new Fields(
+                fields.stream().map(field -> Field.builder()
+                        .name(field.getName())
+                        .type(field.getType().getPresentableText())
+                        .isOptional(isOptional)).toList()
+        );
     }
 
     private static ExistingClass mapContext(PluginContext context) {
@@ -53,16 +54,16 @@ public class FluentBuilderParametersMapper {
         return getBuilder(psiClass) != null;
     }
 
-    private static List<Field> existingBuilderFields(PsiClass psiClass) {
+    private static List<BuilderField> existingBuilderFields(PsiClass psiClass) {
         if(isBuilderExist(psiClass)) {
             PsiClass builder = getBuilder(psiClass);
-            return extractFields(builder).stream().map(FluentBuilderParametersMapper::mapField).toList();
+            return extractFields(builder).stream().map(FluentBuilderParametersMapper::mapBuilderField).toList();
         }
         return Collections.emptyList();
     }
 
-    private static Field mapField(PsiField psiField) {
-        return Field.builder()
+    private static BuilderField mapBuilderField(PsiField psiField) {
+        return BuilderField.builder()
                 .name(psiField.getName())
                 .type(psiField.getType().getPresentableText());
     }

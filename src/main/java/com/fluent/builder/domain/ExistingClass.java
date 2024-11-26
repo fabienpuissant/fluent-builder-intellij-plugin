@@ -6,13 +6,37 @@ public class ExistingClass {
 
     private String className;
     private boolean isBuilderExist;
-    private List<Field> existingBuilderFields;
+    private List<BuilderField> existingBuilderFields;
     private List<Interface> builderInterfaces;
     private List<Method> classMethods;
     private List<Method> builderMethods;
 
+    public String className() {
+        return className;
+    }
+
+    public boolean isBuilderExist() {
+        return isBuilderExist;
+    }
+
+    public List<BuilderField> existingBuilderFields() {
+        return existingBuilderFields;
+    }
+
+    public List<Interface> builderInterfaces() {
+        return builderInterfaces;
+    }
+
+    public List<Method> classMethods() {
+        return classMethods;
+    }
+
+    public List<Method> builderMethods() {
+        return builderMethods;
+    }
+
     private ExistingClass(ExistingClassBuilder builder) {
-        if(builder.className == null || builder.existingBuilderFields == null || builder.builderInterfaces == null || builder.classMethods == null || builder.builderMethods == null) throw  new IllegalStateException();
+        assert builder.className != null && builder.existingBuilderFields != null && builder.builderInterfaces != null && builder.classMethods != null && builder.builderMethods != null;
 
         this.className = builder.className;
         this.isBuilderExist = builder.isBuilderExist;
@@ -35,7 +59,7 @@ public class ExistingClass {
     }
 
     public sealed interface ExistingBuilderFieldsBuilder permits ExistingClassBuilder {
-        ExistingClassInterfacesBuilder existingBuilderFields(List<Field> existingBuilderFields);
+        ExistingClassInterfacesBuilder existingBuilderFields(List<BuilderField> existingBuilderFields);
     }
 
     public sealed interface ExistingClassInterfacesBuilder permits ExistingClassBuilder {
@@ -54,7 +78,7 @@ public class ExistingClass {
 
         private String className;
         private boolean isBuilderExist;
-        private List<Field> existingBuilderFields;
+        private List<BuilderField> existingBuilderFields;
         private List<Interface> builderInterfaces;
         private List<Method> classMethods;
         private List<Method> builderMethods;
@@ -77,7 +101,7 @@ public class ExistingClass {
         }
 
         @Override
-        public ExistingClassInterfacesBuilder existingBuilderFields(List<Field> existingBuilderFields) {
+        public ExistingClassInterfacesBuilder existingBuilderFields(List<BuilderField> existingBuilderFields) {
             this.existingBuilderFields = existingBuilderFields;
 
             return this;

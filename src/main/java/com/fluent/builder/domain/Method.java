@@ -7,7 +7,7 @@ public class Method {
     private final boolean shouldOverride;
 
     private Method(MethodBuilder builder) {
-        if(builder.signature == null || builder.content == null) throw new IllegalStateException();
+        assert builder.signature != null && builder.content != null;
 
         this.signature = builder.signature;
         this.content = builder.content;

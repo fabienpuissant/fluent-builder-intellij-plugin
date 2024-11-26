@@ -3,12 +3,25 @@ package com.fluent.builder.domain;
 public class Field {
     private String name;
     private String type;
+    private boolean isOptional;
+
+    public String name() {
+        return name;
+    }
+    public String type() {
+        return type;
+    }
+
+    public boolean isOptional() {
+        return isOptional;
+    }
 
     private Field(FieldBuilder builder) {
-        if(builder.name == null || builder.type == null) throw new IllegalStateException();
+        assert builder.name != null && builder.type != null;
 
         this.name = builder.name;
         this.type = builder.type;
+        this.isOptional = builder.isOptional;
     }
 
     public static FieldNameBuilder builder() {
@@ -20,12 +33,17 @@ public class Field {
     }
 
     public sealed interface FieldTypeBuilder permits FieldBuilder {
-        Field type(String type);
+        FieldIsOptionalBuilder type(String type);
     }
 
-    private static final class FieldBuilder implements FieldNameBuilder, FieldTypeBuilder {
+    public sealed interface FieldIsOptionalBuilder permits FieldBuilder {
+        Field isOptional(boolean isOptional);
+    }
+
+    private static final class FieldBuilder implements FieldNameBuilder, FieldTypeBuilder, FieldIsOptionalBuilder {
         private String name;
         private String type;
+        private boolean isOptional;
 
         @Override
         public FieldTypeBuilder name(String name) {
@@ -35,8 +53,15 @@ public class Field {
         }
 
         @Override
-        public Field type(String type) {
+        public FieldIsOptionalBuilder type(String type) {
             this.type = type;
+
+            return this;
+        }
+
+        @Override
+        public Field isOptional(boolean isOptional) {
+            this.isOptional = isOptional;
 
             return new Field(this);
         }
