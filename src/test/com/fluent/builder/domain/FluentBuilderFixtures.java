@@ -197,4 +197,26 @@ public class FluentBuilderFixtures {
                                 .isOptional(false))));
     }
 
+    static FluentBuilderParameters classWithBuilderMethods() {
+        return FluentBuilderParameters.builder()
+                .context(ExistingClass.builder()
+                        .className(CLASS_NAME)
+                        .isBuilderExist(true)
+                        .existingBuilderFields(List.of(
+                                BuilderField.builder()
+                                        .name("firstName")
+                                        .type("String")))
+                        .interfaces(List.of())
+                        .classMethods(List.of())
+                        .builderMethods(List.of(Method.builder()
+                                .signature("public Sut firstName(String firstName)")
+                                .content("""
+                                        this.firstName = firstName;
+                                        
+                                        return new Sut(this);
+                                        """)
+                                .shouldOverride(true))))
+                .parameters(new Fields(List.of()));
+    }
+
 }

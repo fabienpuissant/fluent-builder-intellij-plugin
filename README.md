@@ -17,12 +17,12 @@
 
  3. Creation des champs du builder V
 
- 4. Implementer les interfaces dans le builder 
+ 4. Implementer les interfaces dans le builder V
 
- 5. Si au moins un champ optionel => implémenter la methode build dans le builder
+ 5. Si au moins un champ optionel => implémenter la methode build dans le builder V
 
- 6. Constructeur privé avec le builder
+ 6. Constructeur privé avec le builder V
 
  7. public static XXXPREMIERPARAMBuilder builder() {
          return new XXXBuilder();
-     }
+     } V

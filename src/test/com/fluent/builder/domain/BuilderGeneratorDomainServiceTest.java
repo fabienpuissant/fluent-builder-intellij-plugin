@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.fluent.builder.domain.FluentBuilderFixtures.*;
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -206,6 +205,20 @@ class BuilderGeneratorDomainServiceTest {
     }
 
     @Test
+        //TODO Maybe not delete all interfaces (first version drop all and create)
+    void shouldDeleteAllBuilderInterfaces() {
+        builder.generateBuilder(classWithBuilderMethods());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                        DeleteCommand.builder()
+                                .name(new TargetName("firstName"))
+                                .scope(CommandScope.BUILDER)
+                                .type(TargetType.METHOD));
+    }
+
+
+    @Test
     void shouldImplementInterfaceInBuilderWhenNotExists() {
         builder.generateBuilder(classWithOneMandatoryParameter());
 
@@ -252,6 +265,46 @@ class BuilderGeneratorDomainServiceTest {
                                 return new Sut(this);
                                 """))
                         .scope(CommandScope.BUILDER));
+    }
+
+    @Test
+    void shouldBuilderImplementBuildMethodIfAtLeastOneFieldOptional() {
+        builder.generateBuilder(classWithTwoMandatoryParameterAndOneOptional());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                CreateCommand.builder()
+                        .signature(new CommandSignature("public Sut build()"))
+                        .content(new CommandContent("return new Sut(this);"))
+                        .scope(CommandScope.BUILDER));
+    }
+
+    @Test
+    void shouldCreateClassConstructor() {
+        builder.generateBuilder(classWithTwoMandatoryParameterAndOneOptional());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                CreateCommand.builder()
+                        .signature(new CommandSignature("private Sut(SutBuilder builder)"))
+                        .content(new CommandContent("""
+                                this.firstName = builder.firstName;
+                                this.lastName = builder.lastName;
+                                this.age = builder.age;
+                                """))
+                        .scope(CommandScope.CLASS));
+    }
+
+    @Test
+    void shouldCreateBuilderMethod() {
+        builder.generateBuilder(classWithTwoMandatoryParameterAndOneOptional());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                CreateCommand.builder()
+                        .signature(new CommandSignature("public static SutFirstNameBuilder builder()"))
+                        .content(new CommandContent("return new SutBuilder();"))
+                        .scope(CommandScope.CLASS));
     }
 
 

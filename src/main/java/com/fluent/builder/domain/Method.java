@@ -6,6 +6,18 @@ public class Method {
     private final String content;
     private final boolean shouldOverride;
 
+    public String signature() {
+        return signature;
+    }
+
+    public String content() {
+        return content;
+    }
+
+    public boolean shouldOverride() {
+        return shouldOverride;
+    }
+
     private Method(MethodBuilder builder) {
         assert builder.signature != null && builder.content != null;
 

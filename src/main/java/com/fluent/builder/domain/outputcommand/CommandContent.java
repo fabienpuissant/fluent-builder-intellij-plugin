@@ -30,4 +30,11 @@ public class CommandContent {
     public int hashCode() {
         return Objects.hashCode(value);
     }
+
+    @Override
+    public String toString() {
+        return "CommandContent{" +
+                "value='" + value + '\'' +
+                '}';
+    }
 }
