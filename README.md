@@ -1,28 +1,34 @@
+# IntelliJ Fluent Builder Plugin
 
- Notes etapes de construction d'un builder (humain)
+The **IntelliJ Fluent Builder Plugin** is your go-to solution for generating and managing fluent builders in Java projects.
 
- 1. Est ce que toutes mes interfaces de builder sont présentes dans la classe ?
- public interface XXXPARAMBuilder
- content :
-      Si mandatory => le contenu de l'interface :
-          XXXNEXTPARAMBuilder PARAM(type PARAM)
+## Key Features
 
-      Si dernier param ou param optionel => le content :
-          XXXBuilder PARAM(type PARAM)   V
+1. **Effortless Fluent Builder Creation**  
+   Quickly generate fluent builders for your classes with minimal effort, following a clean and intuitive design.
 
+2. **Highly Adaptable Builders**  
+   Customize your builder to fit your exact needs:
+    - Modify parameter types or names.
+    - Remove parameters to simplify your builder.
+    - Make parameters optional to suit different use cases.
+    - Reorder parameters for better readability and usability.  
+      The plugin automatically adjusts the builder interfaces and methods to reflect your changes, ensuring a consistent and reliable builder.
 
- 2. Est ce que le builder exist ? Non alors je le fait , Oui je regarde ce qu'il y a dedans
- Nommage XXXBuilder avec XXX nom de la classe private static final class
-  => Implémente toutes les interfaces V
+3. **Seamless Compatibility with Existing Code**  
+   The plugin adheres to established naming conventions to ensure compatibility with your existing project:
+    - **Builder Class Names**: `ClassNameBuilder`
+    - **Builder Interface Names**: `ClassNameParamBuilder`  
+      This ensures that your generated builders integrate seamlessly into your current workflow.
 
- 3. Creation des champs du builder V
+## Hexagonal Architecture Support
 
- 4. Implementer les interfaces dans le builder V
+This plugin is built with **Hexagonal Architecture** in mind, allowing you to:
 
- 5. Si au moins un champ optionel => implémenter la methode build dans le builder V
+- **Export the Domain**: The plugin facilitates the export of your domain logic, allowing you to define and refine your model without worrying about infrastructure concerns.
+- **Adapt the Primary Infrastructure**: You can adapt your primary infrastructure to match the specific needs of the domain.
+- **Generate Commands**: Once your domain is exported and infrastructure is adapted, the plugin generates a list of ordered commands to perform the necessary actions to create your fluent builder.
 
- 6. Constructeur privé avec le builder V
+## Need Help or Have Suggestions?
 
- 7. public static XXXPREMIERPARAMBuilder builder() {
-         return new XXXBuilder();
-     } V
+Feel free to reach out.
