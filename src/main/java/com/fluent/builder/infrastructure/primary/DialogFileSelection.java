@@ -1,21 +1,17 @@
 package com.fluent.builder.infrastructure.primary;
 
-import com.fluent.builder.domain.ExistingClass;
+import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
-
-import javax.swing.*;
-
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.psi.PsiField;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 
+import javax.swing.*;
+
 import static com.intellij.openapi.ui.LabeledComponent.create;
 import static com.intellij.ui.ToolbarDecorator.createDecorator;
-
-//TODO magic String into constant enum
 
 /**
  * Credit <a href="https://github.com/Powershooter83/SealedFluentBuilder/blob/main/src/main/java/me/prouge/sealedfluentbuilder/panels/FieldSelectionPanel.java">...</a>

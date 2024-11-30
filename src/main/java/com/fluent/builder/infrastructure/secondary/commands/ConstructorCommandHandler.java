@@ -27,7 +27,7 @@ class ConstructorCommandHandler extends CommandHandler {
     public void handle(PsiClass targetClass, DeleteCommand command) {
         PsiMethod[] constructors = targetClass.getConstructors();
         Arrays.stream(constructors).filter(Objects::nonNull)
-                .filter(constructor -> Objects.requireNonNull(constructor.getSignature(PsiSubstitutor.EMPTY).toString()).contains("Builder")) //TODO A verifier
+                .filter(constructor -> Objects.requireNonNull(constructor.getSignature(PsiSubstitutor.EMPTY).toString()).contains("Builder"))
                 .forEach(PsiElement::delete);
     }
 }

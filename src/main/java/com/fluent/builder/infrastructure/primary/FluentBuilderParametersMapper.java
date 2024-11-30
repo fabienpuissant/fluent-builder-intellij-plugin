@@ -38,8 +38,8 @@ public class FluentBuilderParametersMapper {
                 .isBuilderExist(isBuilderExist(psiClass))
                 .existingBuilderFields(existingBuilderFields(psiClass))
                 .interfaces(getInterfaces(psiClass))
-                .classMethods(extractMethods(psiClass, false))
-                .builderMethods(extractMethods(builderClass, true));
+                .classMethods(extractMethods(psiClass))
+                .builderMethods(extractMethods(builderClass));
     }
 
     private static List<Interface> getInterfaces(PsiClass psiClass) {
@@ -123,7 +123,7 @@ public class FluentBuilderParametersMapper {
         return methodSignatures;
     }
 
-    public static List<Method> extractMethods(PsiClass psiClass, boolean shouldOverride) {
+    public static List<Method> extractMethods(PsiClass psiClass) {
         List<Method> methods = new ArrayList<>();
 
         if (psiClass != null) {
@@ -136,7 +136,6 @@ public class FluentBuilderParametersMapper {
                         Method.builder()
                                 .signature(signature)
                                 .content(content)
-                                .shouldOverride(shouldOverride)
                 );
             }
         }
