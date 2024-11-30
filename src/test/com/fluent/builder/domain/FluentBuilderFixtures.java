@@ -22,7 +22,10 @@ public class FluentBuilderFixtures {
                         ))
                         .classMethods(List.of())
                         .builderMethods(List.of()))
-                .parameters(new Fields(List.of()));
+                .parameters(new Fields(List.of(Field.builder()
+                        .name("name")
+                        .type("String")
+                        .isOptional(false))));
     }
 
     static FluentBuilderParameters classWithInterfaces() {
@@ -41,7 +44,15 @@ public class FluentBuilderFixtures {
                         ))
                         .classMethods(List.of())
                         .builderMethods(List.of()))
-                .parameters(new Fields(List.of()));
+                .parameters(new Fields(List.of(Field.builder()
+                                .name("name")
+                                .type("String")
+                                .isOptional(false),
+                        Field.builder()
+                                .name("type")
+                                .type("String")
+                                .isOptional(false)
+                )));
     }
 
     static FluentBuilderParameters classWithOneMandatoryParameter() {
@@ -137,7 +148,10 @@ public class FluentBuilderFixtures {
                         .interfaces(List.of())
                         .classMethods(List.of())
                         .builderMethods(List.of()))
-                .parameters(new Fields(List.of()));
+                .parameters(new Fields(List.of(Field.builder()
+                        .name("firstName")
+                        .type("String")
+                        .isOptional(false))));
     }
 
     static FluentBuilderParameters emptyClassWithBuilder() {
@@ -149,7 +163,10 @@ public class FluentBuilderFixtures {
                         .interfaces(List.of())
                         .classMethods(List.of())
                         .builderMethods(List.of()))
-                .parameters(new Fields(List.of()));
+                .parameters(new Fields(List.of(Field.builder()
+                        .name("firstName")
+                        .type("String")
+                        .isOptional(false))));
     }
 
     static FluentBuilderParameters classWithBuilderFieldNotExistingInParams() {
@@ -197,7 +214,9 @@ public class FluentBuilderFixtures {
                                 .isOptional(false))));
     }
 
-    static FluentBuilderParameters classWithBuilderMethods() {
+    //TODO shouldOverride seems useless maybe tbd
+
+    static FluentBuilderParameters classWithBuilderMethod() {
         return FluentBuilderParameters.builder()
                 .context(ExistingClass.builder()
                         .className(CLASS_NAME)
@@ -207,16 +226,40 @@ public class FluentBuilderFixtures {
                                         .name("firstName")
                                         .type("String")))
                         .interfaces(List.of())
-                        .classMethods(List.of())
-                        .builderMethods(List.of(Method.builder()
-                                .signature("public Sut firstName(String firstName)")
-                                .content("""
-                                        this.firstName = firstName;
-                                        
-                                        return new Sut(this);
-                                        """)
-                                .shouldOverride(true))))
-                .parameters(new Fields(List.of()));
+                        .classMethods(List.of(Method.builder()
+                                .signature("public static SutFirstNameBuilder builder()")
+                                .content("return new SutBuilder();")
+                                .shouldOverride(false)))
+                        .builderMethods(List.of()))
+                .parameters(new Fields(List.of(Field.builder()
+                        .name("firstName")
+                        .type("Strind")
+                        .isOptional(false))));
+    }
+
+    static FluentBuilderParameters classWithConstructor() {
+        return FluentBuilderParameters.builder()
+                .context(ExistingClass.builder()
+                        .className(CLASS_NAME)
+                        .isBuilderExist(true)
+                        .existingBuilderFields(List.of(
+                                BuilderField.builder()
+                                        .name("firstName")
+                                        .type("String")))
+                        .interfaces(List.of())
+                        .classMethods(List.of(Method.builder()
+                                        .signature("public static SutFirstNameBuilder builder()")
+                                        .content("return new SutBuilder();")
+                                        .shouldOverride(false),
+                                Method.builder()
+                                        .signature("private Sut(Sut.SutBuilder builder)")
+                                        .content("this.firstName = builder.firstName;")
+                                        .shouldOverride(false)))
+                        .builderMethods(List.of()))
+                .parameters(new Fields(List.of(Field.builder()
+                        .name("firstName")
+                        .type("Strind")
+                        .isOptional(false))));
     }
 
 }

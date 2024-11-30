@@ -12,10 +12,12 @@ public class DeleteCommand implements BuilderCommand {
         return name;
     }
 
+    @Override
     public CommandScope scope() {
         return scope;
     }
 
+    @Override
     public TargetType type() {
         return type;
     }

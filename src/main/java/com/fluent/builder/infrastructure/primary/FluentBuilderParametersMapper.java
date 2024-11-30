@@ -18,7 +18,7 @@ public class FluentBuilderParametersMapper {
     public static FluentBuilderParameters toDomain(PluginContext context, List<PsiField> mandatoryFields, List<PsiField> optionalFields) {
         return FluentBuilderParameters.builder()
                 .context(mapContext(context))
-                .parameters(mapFields(mandatoryFields, true).concat(mapFields(optionalFields, false)));
+                .parameters(mapFields(mandatoryFields, false).concat(mapFields(optionalFields, true)));
     }
 
     private static Fields mapFields(List<PsiField> fields, boolean isOptional) {

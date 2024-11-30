@@ -11,6 +11,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static com.fluent.builder.domain.FluentBuilderFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -32,7 +34,6 @@ class BuilderGeneratorDomainServiceTest {
     }
 
     @Test
-        //TODO Maybe not delete all interfaces (first version drop all and create)
     void shouldDeleteOneInterfaces() {
         builder.generateBuilder(classWithOneInterface());
 
@@ -75,6 +76,7 @@ class BuilderGeneratorDomainServiceTest {
                         .signature(new CommandSignature("public sealed interface SutFirstNameBuilder permits SutBuilder"))
                         .content(new CommandContent("Sut firstName(String firstName);"))
                         .scope(CommandScope.CLASS)
+                        .type(TargetType.INTERFACE)
         );
     }
 
@@ -88,10 +90,12 @@ class BuilderGeneratorDomainServiceTest {
                         .signature(new CommandSignature("public sealed interface SutFirstNameBuilder permits SutBuilder"))
                         .content(new CommandContent("SutLastNameBuilder firstName(String firstName);"))
                         .scope(CommandScope.CLASS)
+                        .type(TargetType.INTERFACE)
         ).contains(CreateCommand.builder()
                 .signature(new CommandSignature("public sealed interface SutLastNameBuilder permits SutBuilder"))
                 .content(new CommandContent("Sut lastName(String lastName);"))
-                .scope(CommandScope.CLASS));
+                .scope(CommandScope.CLASS)
+                .type(TargetType.INTERFACE));
     }
 
     @Test
@@ -104,6 +108,7 @@ class BuilderGeneratorDomainServiceTest {
                         .signature(new CommandSignature("public sealed interface SutAgeBuilder permits SutBuilder"))
                         .content(new CommandContent("Sut age(int age);"))
                         .scope(CommandScope.CLASS)
+                        .type(TargetType.INTERFACE)
         );
     }
 
@@ -114,14 +119,22 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                         CreateCommand.builder()
+                                .signature(new CommandSignature("public sealed interface SutLastNameBuilder permits SutBuilder"))
+                                .content(new CommandContent("SutBuilder lastName(String lastName);"))
+                                .scope(CommandScope.CLASS)
+                                .type(TargetType.INTERFACE))
+                .contains(
+                        CreateCommand.builder()
                                 .signature(new CommandSignature("public sealed interface SutAgeBuilder permits SutBuilder"))
                                 .content(new CommandContent("SutBuilder age(int age);"))
-                                .scope(CommandScope.CLASS))
+                                .scope(CommandScope.CLASS)
+                                .type(TargetType.INTERFACE))
                 .contains(
                         CreateCommand.builder()
                                 .signature(new CommandSignature("public sealed interface SutGenderBuilder permits SutBuilder"))
                                 .content(new CommandContent("Sut gender(String gender);"))
                                 .scope(CommandScope.CLASS)
+                                .type(TargetType.INTERFACE)
                 );
     }
 
@@ -132,21 +145,27 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("private static final class SutBuilder"))
+                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder"))
                         .content(new CommandContent(null))
-                        .scope(CommandScope.CLASS));
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CLASS));
     }
 
     @Test
-    void shouldNotCreateBuilderIfAlreadyExists() {
+    void shouldDropAndCreateCreateBuilderIfAlreadyExists() {
         builder.generateBuilder(emptyClassWithBuilder());
 
         verify(builderPort).generateBuilder(commandOutput.capture());
-        assertThat(commandOutput.getValue().commands()).doesNotContain(
+        assertThat(commandOutput.getValue().commands()).containsSequence(List.of(
+                DeleteCommand.builder()
+                        .name(new TargetName("SutBuilder"))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CLASS),
                 CreateCommand.builder()
-                        .signature(new CommandSignature("private static final class SutBuilder"))
+                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder"))
                         .content(new CommandContent(null))
-                        .scope(CommandScope.CLASS));
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CLASS)));
     }
 
     @Test
@@ -156,9 +175,10 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("private static final class SutBuilder implements FirstNameBuilder, LastNameBuilder"))
+                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder, SutLastNameBuilder"))
                         .content(new CommandContent(null))
-                        .scope(CommandScope.CLASS));
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CLASS));
     }
 
     @Test
@@ -170,7 +190,8 @@ class BuilderGeneratorDomainServiceTest {
                 CreateCommand.builder()
                         .signature(new CommandSignature("private String firstName;"))
                         .content(new CommandContent(null))
-                        .scope(CommandScope.BUILDER));
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.FIELD));
     }
 
     @Test
@@ -186,7 +207,8 @@ class BuilderGeneratorDomainServiceTest {
                 .contains(CreateCommand.builder()
                         .signature(new CommandSignature("private String lastName;"))
                         .content(new CommandContent(null))
-                        .scope(CommandScope.BUILDER));
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.FIELD));
     }
 
     @Test
@@ -204,19 +226,6 @@ class BuilderGeneratorDomainServiceTest {
         });
     }
 
-    @Test
-        //TODO Maybe not delete all interfaces (first version drop all and create)
-    void shouldDeleteAllBuilderInterfaces() {
-        builder.generateBuilder(classWithBuilderMethods());
-
-        verify(builderPort).generateBuilder(commandOutput.capture());
-        assertThat(commandOutput.getValue().commands()).contains(
-                        DeleteCommand.builder()
-                                .name(new TargetName("firstName"))
-                                .scope(CommandScope.BUILDER)
-                                .type(TargetType.METHOD));
-    }
-
 
     @Test
     void shouldImplementInterfaceInBuilderWhenNotExists() {
@@ -232,9 +241,9 @@ class BuilderGeneratorDomainServiceTest {
                         .content(new CommandContent("""
                                 this.firstName = firstName;
                                 
-                                return new Sut(this);
-                                """))
-                        .scope(CommandScope.BUILDER));
+                                return new Sut(this);"""))
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.METHOD));
     }
 
     @Test
@@ -243,17 +252,17 @@ class BuilderGeneratorDomainServiceTest {
 
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
-                CreateCommand.builder()
-                        .signature(new CommandSignature("""
-                                @Override
-                                public SutLastNameBuilder firstName(String firstName)
-                                """))
-                        .content(new CommandContent("""
-                                this.firstName = firstName;
-                                
-                                return this;
-                                """))
-                        .scope(CommandScope.BUILDER))
+                        CreateCommand.builder()
+                                .signature(new CommandSignature("""
+                                        @Override
+                                        public SutLastNameBuilder firstName(String firstName)
+                                        """))
+                                .content(new CommandContent("""
+                                        this.firstName = firstName;
+                                        
+                                        return this;"""))
+                                .scope(CommandScope.BUILDER)
+                                .type(TargetType.METHOD))
                 .contains(CreateCommand.builder()
                         .signature(new CommandSignature("""
                                 @Override
@@ -262,9 +271,9 @@ class BuilderGeneratorDomainServiceTest {
                         .content(new CommandContent("""
                                 this.lastName = lastName;
                                 
-                                return new Sut(this);
-                                """))
-                        .scope(CommandScope.BUILDER));
+                                return new Sut(this);"""))
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.METHOD));
     }
 
     @Test
@@ -276,7 +285,8 @@ class BuilderGeneratorDomainServiceTest {
                 CreateCommand.builder()
                         .signature(new CommandSignature("public Sut build()"))
                         .content(new CommandContent("return new Sut(this);"))
-                        .scope(CommandScope.BUILDER));
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.METHOD));
     }
 
     @Test
@@ -290,9 +300,27 @@ class BuilderGeneratorDomainServiceTest {
                         .content(new CommandContent("""
                                 this.firstName = builder.firstName;
                                 this.lastName = builder.lastName;
-                                this.age = builder.age;
-                                """))
-                        .scope(CommandScope.CLASS));
+                                this.age = builder.age;"""))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CONSTRUCTOR));
+    }
+
+    @Test
+    void shouldDropClassConstructorWhenExists() {
+        builder.generateBuilder(classWithConstructor());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).containsSequence(List.of(
+                DeleteCommand.builder()
+                        .name(new TargetName("Sut"))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CONSTRUCTOR),
+                CreateCommand.builder()
+                        .signature(new CommandSignature("private Sut(SutBuilder builder)"))
+                        .content(new CommandContent("""
+                                this.firstName = builder.firstName;"""))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CONSTRUCTOR)));
     }
 
     @Test
@@ -304,9 +332,24 @@ class BuilderGeneratorDomainServiceTest {
                 CreateCommand.builder()
                         .signature(new CommandSignature("public static SutFirstNameBuilder builder()"))
                         .content(new CommandContent("return new SutBuilder();"))
-                        .scope(CommandScope.CLASS));
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.METHOD));
     }
 
+    @Test
+    void shouldDropBuilderMethodWhenExists() {
+        builder.generateBuilder(classWithBuilderMethod());
 
-
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).containsSequence(List.of(
+                DeleteCommand.builder()
+                        .name(new TargetName("builder"))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.METHOD),
+                CreateCommand.builder()
+                        .signature(new CommandSignature("public static SutFirstNameBuilder builder()"))
+                        .content(new CommandContent("return new SutBuilder();"))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.METHOD)));
+    }
 }

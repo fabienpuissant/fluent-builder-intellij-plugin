@@ -5,7 +5,10 @@ import java.util.Objects;
 public class CreateCommand implements BuilderCommand {
     private CommandSignature signature;
     private CommandContent content;
+    private CommandScope scope;
+    private TargetType type;
 
+    @Override
     public CommandScope scope() {
         return scope;
     }
@@ -18,16 +21,18 @@ public class CreateCommand implements BuilderCommand {
         return signature;
     }
 
-    private CommandScope scope
-
-            ;
+    @Override
+    public TargetType type() {
+        return type;
+    }
 
     private CreateCommand(CreateCommandBuilder builder) {
-        assert builder.signature != null && builder.scope != null && builder.content != null;
+        assert builder.signature != null && builder.scope != null && builder.content != null && builder.type != null;
 
         this.signature = builder.signature;
         this.content = builder.content;
         this.scope = builder.scope;
+        this.type = builder.type;
     }
 
     public static CommandSignatureBuilder builder() {
@@ -43,16 +48,21 @@ public class CreateCommand implements BuilderCommand {
     }
 
     public sealed interface CommandScopeBuilder permits CreateCommandBuilder {
-        CreateCommand scope(CommandScope scope);
+        CreateCommandTypeBuilder scope(CommandScope scope);
+    }
+
+    public sealed interface CreateCommandTypeBuilder permits CreateCommandBuilder {
+        CreateCommand type(TargetType type);
     }
 
 
     private static final class CreateCommandBuilder implements
-            CommandContentBuilder, CommandSignatureBuilder, CommandScopeBuilder {
+            CommandContentBuilder, CommandSignatureBuilder, CommandScopeBuilder, CreateCommandTypeBuilder {
 
         private CommandSignature signature;
         private CommandContent content;
         private CommandScope scope;
+        private TargetType type;
 
 
         @Override
@@ -72,11 +82,17 @@ public class CreateCommand implements BuilderCommand {
         }
 
         @Override
-        public CreateCommand scope(CommandScope scope) {
+        public CreateCommandTypeBuilder scope(CommandScope scope) {
             this.scope = scope;
 
-            return new CreateCommand(this);
+            return this;
+        }
 
+        @Override
+        public CreateCommand type(TargetType type) {
+            this.type = type;
+
+            return new CreateCommand(this);
         }
     }
 
