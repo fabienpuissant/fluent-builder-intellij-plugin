@@ -3,6 +3,8 @@
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
     <id>com.fluent.builder.fluent-builder</id>
 
+    <version>1.0.0</version>
+
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>Fluent Builder</name>
@@ -14,6 +16,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
+    <body>
     <p>The <strong>IntelliJ Fluent Builder Plugin</strong> is your go-to solution for generating and managing fluent builders in Java projects.</p>
 
     <h4>Key Features:</h4>
@@ -39,6 +42,7 @@
     </ol>
 
     <p><em>Need help or have suggestions? Feel free to reach out.</em></p>
+    </body>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -58,7 +62,8 @@
 
 
     <actions>
-        <action id="FluentBuilderAction" class="com.fluent.builder.infrastructure.primary.FluentBuilderAction" text="Fluent Builder" description="Generate a Fluent Builder">
+        <action id="FluentBuilderAction" class="com.fluent.builder.infrastructure.primary.FluentBuilderAction"
+                text="Fluent Builder" description="Generate a Fluent Builder">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift B"/>
         </action>
