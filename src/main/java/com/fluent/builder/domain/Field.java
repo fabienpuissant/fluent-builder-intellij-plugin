@@ -1,9 +1,9 @@
 package com.fluent.builder.domain;
 
 public class Field {
-    private String name;
-    private String type;
-    private boolean isOptional;
+    private final String name;
+    private final String type;
+    private final boolean isOptional;
 
     public String name() {
         return name;
@@ -66,7 +66,4 @@ public class Field {
             return new Field(this);
         }
     }
-
-
-
 }

@@ -1,8 +1,8 @@
 package com.fluent.builder.domain;
 
 public class BuilderField {
-    private String name;
-    private String type;
+    private final String name;
+    private final String type;
 
     public String name() {
         return name;
@@ -49,8 +49,5 @@ public class BuilderField {
             return new BuilderField(this);
         }
     }
-
-
-
 }
 

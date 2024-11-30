@@ -3,10 +3,10 @@ package com.fluent.builder.domain.outputcommand;
 import java.util.Objects;
 
 public class CreateCommand implements BuilderCommand {
-    private CommandSignature signature;
-    private CommandContent content;
-    private CommandScope scope;
-    private TargetType type;
+    private final CommandSignature signature;
+    private final CommandContent content;
+    private final CommandScope scope;
+    private final TargetType type;
 
     @Override
     public CommandScope scope() {

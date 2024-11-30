@@ -195,23 +195,6 @@ class BuilderGeneratorDomainServiceTest {
     }
 
     @Test
-    void shouldDeleteBuilderFieldsWhenExistInCurrentBuilderButNotExistsInParameters() {
-        builder.generateBuilder(classWithBuilderFieldNotExistingInParams());
-
-        verify(builderPort).generateBuilder(commandOutput.capture());
-        assertThat(commandOutput.getValue().commands()).contains(
-                        DeleteCommand.builder()
-                                .name(new TargetName("firstName"))
-                                .scope(CommandScope.BUILDER)
-                                .type(TargetType.FIELD))
-                .contains(CreateCommand.builder()
-                        .signature(new CommandSignature("private String lastName;"))
-                        .content(new CommandContent(null))
-                        .scope(CommandScope.BUILDER)
-                        .type(TargetType.FIELD));
-    }
-
-    @Test
     void shouldNotAlterBuilderFieldWhenExistInCurrentBuilder() {
         builder.generateBuilder(classWithBuilderFieldExistingInParams());
 

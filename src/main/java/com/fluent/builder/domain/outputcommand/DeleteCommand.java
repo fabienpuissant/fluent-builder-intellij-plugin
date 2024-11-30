@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class DeleteCommand implements BuilderCommand {
 
-    private TargetName name;
-    private CommandScope scope;
-    private TargetType type;
+    private final TargetName name;
+    private final CommandScope scope;
+    private final TargetType type;
 
     public TargetName name() {
         return name;

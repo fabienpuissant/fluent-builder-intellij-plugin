@@ -2,12 +2,10 @@ package com.fluent.builder.infrastructure.primary;
 
 import com.fluent.builder.domain.*;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class FluentBuilderParametersMapper {
@@ -32,14 +30,11 @@ public class FluentBuilderParametersMapper {
 
     private static ExistingClass mapContext(PluginContext context) {
         PsiClass psiClass = context.ownerClass();
-        PsiClass builderClass = getBuilder(psiClass);
         return ExistingClass.builder()
                 .className(context.ownerClass().getName())
                 .isBuilderExist(isBuilderExist(psiClass))
-                .existingBuilderFields(existingBuilderFields(psiClass))
                 .interfaces(getInterfaces(psiClass))
-                .classMethods(extractMethods(psiClass))
-                .builderMethods(extractMethods(builderClass));
+                .classMethods(extractMethods(psiClass));
     }
 
     private static List<Interface> getInterfaces(PsiClass psiClass) {
@@ -54,32 +49,12 @@ public class FluentBuilderParametersMapper {
         return getBuilder(psiClass) != null;
     }
 
-    private static List<BuilderField> existingBuilderFields(PsiClass psiClass) {
-        if(isBuilderExist(psiClass)) {
-            PsiClass builder = getBuilder(psiClass);
-            return extractFields(builder).stream().map(FluentBuilderParametersMapper::mapBuilderField).toList();
-        }
-        return Collections.emptyList();
-    }
-
-    private static BuilderField mapBuilderField(PsiField psiField) {
-        return BuilderField.builder()
-                .name(psiField.getName())
-                .type(psiField.getType().getPresentableText());
-    }
-
     private static String builderName(String className) {
         return className + "Builder";
     }
 
     private static @Nullable PsiClass getBuilder(PsiClass psiClass) {
         return psiClass.findInnerClassByName(builderName(psiClass.getName()), false);
-    }
-
-    private static List<PsiField> extractFields(PsiClass psiClass) {
-        return Arrays.stream(PsiTreeUtil.collectElements(psiClass,
-                e -> e instanceof PsiField)).map(PsiField.class::cast)
-                .toList();
     }
 
     private static List<PsiClass> extractInterfaces(PsiClass psiClass) {
