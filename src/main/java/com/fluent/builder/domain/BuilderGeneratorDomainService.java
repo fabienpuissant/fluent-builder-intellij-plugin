@@ -102,15 +102,15 @@ public class BuilderGeneratorDomainService {
 
     private List<BuilderCommand> builderMethod(FluentBuilderParameters fluentBuilderParameters) {
         List<BuilderCommand> commands = new ArrayList<>();
-        String builderMethodSignature = "%s builder()".formatted(extractFirstInterfaceName(fluentBuilderParameters));
 
-        if (isIsBuilderMethodExist(fluentBuilderParameters, builderMethodSignature)) {
+        if (isIsBuilderMethodExist(fluentBuilderParameters, "builder()")) {
             commands.add(DeleteCommand.builder()
                     .name(new TargetName("builder"))
                     .scope(CommandScope.CLASS)
                     .type(TargetType.METHOD));
         }
 
+        String builderMethodSignature = "%s builder()".formatted(extractFirstInterfaceName(fluentBuilderParameters));
         commands.add(CreateCommand.builder()
                 .signature(new CommandSignature("public static %s".formatted(builderMethodSignature)))
                 .content(new CommandContent("return new %sBuilder();".formatted(fluentBuilderParameters.existingClass().className())))
