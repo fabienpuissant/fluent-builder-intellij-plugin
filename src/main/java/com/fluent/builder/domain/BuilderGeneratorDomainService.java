@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.function.Predicate.*;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 public class BuilderGeneratorDomainService {
@@ -32,12 +33,59 @@ public class BuilderGeneratorDomainService {
         builderPort.generateBuilder(new BuilderCommandOutput(commands));
     }
 
-    private static List<BuilderCommand> interfacesCommands(FluentBuilderParameters fluentBuilderParameters) {
+    private List<BuilderCommand> interfacesCommands(FluentBuilderParameters fluentBuilderParameters) {
         List<BuilderCommand> commands = new ArrayList<>();
         commands.addAll(interfacesToRemove(fluentBuilderParameters.existingClass()));
-        commands.addAll(interfacesToCreate(fluentBuilderParameters.parameters(),
-                fluentBuilderParameters.existingClass().className()));
+
+        interfacesToCreate(fluentBuilderParameters, commands);
+
         return commands;
+    }
+
+    private void interfacesToCreate(FluentBuilderParameters fluentBuilderParameters, List<BuilderCommand> commands) {
+        List<Field> mandatoryParams = fluentBuilderParameters.parameters().fields().stream().filter(not(Field::isOptional)).toList();
+        List<Field> optionalParams = fluentBuilderParameters.parameters().fields().stream().filter(Field::isOptional).toList();
+        String className = fluentBuilderParameters.existingClass().className();
+
+        for (int i = 0; i < mandatoryParams.size(); i++) {
+            Field field = mandatoryParams.get(i);
+            String currentInterfaceName = interfaceNameForParameter(field, className);
+            boolean isLastMandatoryField = field.equals(mandatoryParams.getLast());
+            StringBuilder nextInterfaceName = new StringBuilder();
+            if(!isLastMandatoryField) {
+                nextInterfaceName.append(interfaceNameForParameter(mandatoryParams.get(i + 1), className));
+            } else {
+                nextInterfaceName.append(optionalParams.isEmpty() ? className : "%sOptionalBuilder".formatted(className));
+            }
+
+            String interfaceContent = nextInterfaceName.toString().equals(className)
+                    ? String.format("%s %s(%s %s);", className, field.name(), field.type(), field.name())
+                    : String.format("%s %s(%s %s);", nextInterfaceName, field.name(), field.type(), field.name());
+
+            commands.add(CreateCommand.builder()
+                    .signature(new CommandSignature(String.format("public sealed interface %s permits %sBuilder", currentInterfaceName, className)))
+                    .content(new CommandContent(interfaceContent))
+                    .scope(CommandScope.CLASS)
+                    .type(TargetType.INTERFACE));
+        }
+
+        if (!optionalParams.isEmpty()) {
+            StringBuilder contentBuilder = new StringBuilder();
+            for (Field field : optionalParams) {
+                contentBuilder.append("%sOptionalBuilder %s(%s %s);\n".formatted(className, field.name(), field.type(), field.name()));
+            }
+            contentBuilder.append("%s build();".formatted(className));
+
+            commands.add(CreateCommand.builder()
+                    .signature(new CommandSignature("public sealed interface %sOptionalBuilder permits %sBuilder".formatted(className, className)))
+                    .content(new CommandContent(contentBuilder.toString()))
+                    .scope(CommandScope.CLASS)
+                    .type(TargetType.INTERFACE));
+        }
+    }
+
+    private String interfaceNameForParameter(Field field, String className) {
+        return "%s%sBuilder".formatted(className, capitalize(field.name()));
     }
 
     private List<BuilderCommand> builderCommands(FluentBuilderParameters fluentBuilderParameters) {
@@ -62,9 +110,43 @@ public class BuilderGeneratorDomainService {
         return commands;
     }
 
-    private List<CreateCommand> builderInterfacesCommands(FluentBuilderParameters fluentBuilderParameters) {
+    private static List<CreateCommand> builderInterfacesCommands(FluentBuilderParameters fluentBuilderParameters) {
+        List<CreateCommand> commands = new ArrayList<>();
+        Iterator<Field> fieldIterator = fluentBuilderParameters.parameters().fields().iterator();
+
         String existingClassName = fluentBuilderParameters.existingClass().className();
-        return createBuilderInterfaces(fluentBuilderParameters, existingClassName);
+        Field currentField;
+        Field nextField = fieldIterator.hasNext() ? fieldIterator.next() : null;
+
+        while (nextField != null) {
+            currentField = nextField;
+            nextField = fieldIterator.hasNext() ? fieldIterator.next() : null;
+
+            boolean isOptionalFieldExist = fluentBuilderParameters.parameters().fields().stream().anyMatch(Field::isOptional);
+            String nextBuilder = isOptionalFieldExist ? existingClassName + "OptionalBuilder" : existingClassName;
+            String nextReturn = isOptionalFieldExist ? "this" : "new %s(this)".formatted(existingClassName);
+
+            if (nextField != null) {
+                nextBuilder = nextField.isOptional() ? existingClassName + "Optional" : existingClassName + capitalize(nextField.name());
+                nextBuilder += "Builder";
+                nextReturn = "this";
+            }
+
+            commands.add(CreateCommand.builder()
+                    .signature(new CommandSignature("""
+                                @Override
+                                public %s %s(%s %s)
+                                """.formatted(nextBuilder, currentField.name(), currentField.type(), currentField.name())))
+                    .content(new CommandContent("""
+                                this.%s = %s;
+                                
+                                return %s;""".formatted(currentField.name(), currentField.name(), nextReturn)))
+                    .scope(CommandScope.BUILDER)
+                    .type(TargetType.METHOD)
+            );
+        }
+
+        return commands;
     }
 
     private List<CreateCommand> buildMethod(FluentBuilderParameters fluentBuilderParameters) {
@@ -72,7 +154,7 @@ public class BuilderGeneratorDomainService {
             return List.of();
         }
         return List.of(CreateCommand.builder()
-                .signature(new CommandSignature("public %s build()".formatted(fluentBuilderParameters.existingClass().className())))
+                .signature(new CommandSignature("@Override\npublic %s build()".formatted(fluentBuilderParameters.existingClass().className())))
                 .content(new CommandContent("return new %s(this);".formatted(fluentBuilderParameters.existingClass().className())))
                 .scope(CommandScope.BUILDER)
                 .type(TargetType.METHOD));
@@ -122,6 +204,9 @@ public class BuilderGeneratorDomainService {
 
     private static String extractFirstInterfaceName(FluentBuilderParameters fluentBuilderParameters) {
         Field firstField = fluentBuilderParameters.parameters().fields().stream().findFirst().orElseThrow();
+        if(fluentBuilderParameters.parameters().fields().stream().allMatch(Field::isOptional)) {
+            return "%sOptionalBuilder".formatted(fluentBuilderParameters.existingClass().className());
+        }
         return "%s%sBuilder".formatted(fluentBuilderParameters.existingClass().className(), capitalize(firstField.name()));
     }
 
@@ -137,7 +222,7 @@ public class BuilderGeneratorDomainService {
     }
 
     private static CreateCommand createBuilder(FluentBuilderParameters fluentBuilderParameters, String builderName) {
-        StringBuilder builderSignature = new StringBuilder("public static final class %s".formatted(builderName));
+        StringBuilder builderSignature = new StringBuilder("private static final class %s".formatted(builderName));
         addImplementedInterfaces(fluentBuilderParameters, builderSignature);
 
         return CreateCommand.builder()
@@ -151,7 +236,10 @@ public class BuilderGeneratorDomainService {
         if (fluentBuilderParameters.parameters().fields().isEmpty()) return;
 
         builderSignature.append(" implements");
-        fluentBuilderParameters.parameters().fields().forEach(field -> builderSignature.append(" %s%sBuilder,".formatted(fluentBuilderParameters.existingClass().className(), capitalize(field.name()))));
+        fluentBuilderParameters.parameters().fields().stream().filter(not(Field::isOptional)).forEach(field -> builderSignature.append(" %s%sBuilder,".formatted(fluentBuilderParameters.existingClass().className(), capitalize(field.name()))));
+        if(fluentBuilderParameters.parameters().fields().stream().anyMatch(Field::isOptional)) {
+            builderSignature.append(" %sOptionalBuilder,".formatted(fluentBuilderParameters.existingClass().className()));
+        }
         builderSignature.deleteCharAt(builderSignature.length() - 1);
     }
 
@@ -162,69 +250,6 @@ public class BuilderGeneratorDomainService {
                         .scope(CommandScope.CLASS)
                         .type(TargetType.INTERFACE)
                 ).toList();
-    }
-
-    private static List<CreateCommand> interfacesToCreate(Fields fields, String existingClassName) {
-        return generateInterfaces(fields.fields().iterator(), existingClassName,
-                (currentField, nextBuilder, nextReturn) -> CreateCommand.builder()
-                        .signature(new CommandSignature(
-                                "public sealed interface %s%sBuilder permits %sBuilder"
-                                        .formatted(existingClassName, capitalize(currentField.name()), existingClassName)))
-                        .content(new CommandContent(
-                                "%s %s(%s %s);"
-                                        .formatted(nextBuilder, currentField.name(), currentField.type(), currentField.name())))
-                        .scope(CommandScope.CLASS)
-                        .type(TargetType.INTERFACE)
-        );
-    }
-
-    private static List<CreateCommand> createBuilderInterfaces(FluentBuilderParameters fluentBuilderParameters, String existingClassName) {
-        return generateInterfaces(fluentBuilderParameters.parameters().fields().iterator(), existingClassName,
-                (currentField, nextBuilder, nextReturn) -> CreateCommand.builder()
-                        .signature(new CommandSignature("""
-                                @Override
-                                public %s %s(%s %s)
-                                """.formatted(nextBuilder, currentField.name(), currentField.type(), currentField.name())))
-                        .content(new CommandContent("""
-                                this.%s = %s;
-                                
-                                return %s;""".formatted(currentField.name(), currentField.name(), nextReturn)))
-                        .scope(CommandScope.BUILDER)
-                        .type(TargetType.METHOD)
-        );
-    }
-
-    @FunctionalInterface
-    interface CommandGenerator<T> {
-        T generate(Field currentField, String nextBuilder, String nextReturn);
-    }
-
-    private static <T> List<T> generateInterfaces(
-            Iterator<Field> fieldIterator,
-            String existingClassName,
-            CommandGenerator<T> commandGenerator
-    ) {
-        List<T> commands = new ArrayList<>();
-        Field currentField;
-        Field nextField = fieldIterator.hasNext() ? fieldIterator.next() : null;
-
-        while (nextField != null) {
-            currentField = nextField;
-            nextField = fieldIterator.hasNext() ? fieldIterator.next() : null;
-
-            String nextBuilder = existingClassName;
-            String nextReturn = "new %s(this)".formatted(existingClassName);
-
-            if (nextField != null) {
-                nextBuilder = nextField.isOptional() ? existingClassName : existingClassName + capitalize(nextField.name());
-                nextBuilder += "Builder";
-                nextReturn = "this";
-            }
-
-            commands.add(commandGenerator.generate(currentField, nextBuilder, nextReturn));
-        }
-
-        return commands;
     }
 
     private static boolean isConstructorExists(FluentBuilderParameters fluentBuilderParameters) {

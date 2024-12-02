@@ -105,47 +105,40 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("public sealed interface SutAgeBuilder permits SutBuilder"))
-                        .content(new CommandContent("Sut age(int age);"))
+                        .signature(new CommandSignature("public sealed interface SutOptionalBuilder permits SutBuilder"))
+                        .content(new CommandContent("SutOptionalBuilder age(int age);\nSut build();"))
                         .scope(CommandScope.CLASS)
                         .type(TargetType.INTERFACE)
         );
     }
 
     @Test
-    void shouldOptionalParamInterfacesAlwaysReturnMainClassBuilder() {
+    void shouldOptionalParamBeInOptionalBuilder() {
         builder.generateBuilder(classWithTwoMandatoryParameterAndTwoOptional());
 
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                         CreateCommand.builder()
                                 .signature(new CommandSignature("public sealed interface SutLastNameBuilder permits SutBuilder"))
-                                .content(new CommandContent("SutBuilder lastName(String lastName);"))
+                                .content(new CommandContent("SutOptionalBuilder lastName(String lastName);"))
                                 .scope(CommandScope.CLASS)
                                 .type(TargetType.INTERFACE))
                 .contains(
                         CreateCommand.builder()
-                                .signature(new CommandSignature("public sealed interface SutAgeBuilder permits SutBuilder"))
-                                .content(new CommandContent("SutBuilder age(int age);"))
+                                .signature(new CommandSignature("public sealed interface SutOptionalBuilder permits SutBuilder"))
+                                .content(new CommandContent("SutOptionalBuilder age(int age);\nSutOptionalBuilder gender(String gender);\nSut build();"))
                                 .scope(CommandScope.CLASS)
-                                .type(TargetType.INTERFACE))
-                .contains(
-                        CreateCommand.builder()
-                                .signature(new CommandSignature("public sealed interface SutGenderBuilder permits SutBuilder"))
-                                .content(new CommandContent("Sut gender(String gender);"))
-                                .scope(CommandScope.CLASS)
-                                .type(TargetType.INTERFACE)
-                );
+                                .type(TargetType.INTERFACE));
     }
 
     @Test
-    void shouldCreateBuilderIfNotExists() {
+    void shouldCreateBuilder() {
         builder.generateBuilder(emptyClass());
 
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder"))
+                        .signature(new CommandSignature("private static final class SutBuilder implements SutFirstNameBuilder"))
                         .content(new CommandContent(null))
                         .scope(CommandScope.CLASS)
                         .type(TargetType.CLASS));
@@ -162,7 +155,7 @@ class BuilderGeneratorDomainServiceTest {
                         .scope(CommandScope.CLASS)
                         .type(TargetType.CLASS),
                 CreateCommand.builder()
-                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder"))
+                        .signature(new CommandSignature("private static final class SutBuilder implements SutFirstNameBuilder"))
                         .content(new CommandContent(null))
                         .scope(CommandScope.CLASS)
                         .type(TargetType.CLASS)));
@@ -175,7 +168,20 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("public static final class SutBuilder implements SutFirstNameBuilder, SutLastNameBuilder"))
+                        .signature(new CommandSignature("private static final class SutBuilder implements SutFirstNameBuilder, SutLastNameBuilder"))
+                        .content(new CommandContent(null))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.CLASS));
+    }
+
+    @Test
+    void shouldCreateBuilderImplementsAllInterfacesWithOptional() {
+        builder.generateBuilder(classWithTwoMandatoryParameterAndOneOptional());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                CreateCommand.builder()
+                        .signature(new CommandSignature("private static final class SutBuilder implements SutFirstNameBuilder, SutLastNameBuilder, SutOptionalBuilder"))
                         .content(new CommandContent(null))
                         .scope(CommandScope.CLASS)
                         .type(TargetType.CLASS));
@@ -231,7 +237,7 @@ class BuilderGeneratorDomainServiceTest {
 
     @Test
     void shouldImplementMultipleInterfacesInBuilderWhenNotExists() {
-        builder.generateBuilder(classWithTwoMandatoryParameter());
+        builder.generateBuilder(classWithTwoMandatoryParameterAndOneOptional());
 
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
@@ -249,12 +255,23 @@ class BuilderGeneratorDomainServiceTest {
                 .contains(CreateCommand.builder()
                         .signature(new CommandSignature("""
                                 @Override
-                                public Sut lastName(String lastName)
+                                public SutOptionalBuilder lastName(String lastName)
                                 """))
                         .content(new CommandContent("""
                                 this.lastName = lastName;
                                 
-                                return new Sut(this);"""))
+                                return this;"""))
+                        .scope(CommandScope.BUILDER)
+                        .type(TargetType.METHOD))
+                .contains(CreateCommand.builder()
+                        .signature(new CommandSignature("""
+                                @Override
+                                public SutOptionalBuilder age(int age)
+                                """))
+                        .content(new CommandContent("""
+                                this.age = age;
+                                
+                                return this;"""))
                         .scope(CommandScope.BUILDER)
                         .type(TargetType.METHOD));
     }
@@ -266,7 +283,7 @@ class BuilderGeneratorDomainServiceTest {
         verify(builderPort).generateBuilder(commandOutput.capture());
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
-                        .signature(new CommandSignature("public Sut build()"))
+                        .signature(new CommandSignature("@Override\npublic Sut build()"))
                         .content(new CommandContent("return new Sut(this);"))
                         .scope(CommandScope.BUILDER)
                         .type(TargetType.METHOD));
@@ -314,6 +331,19 @@ class BuilderGeneratorDomainServiceTest {
         assertThat(commandOutput.getValue().commands()).contains(
                 CreateCommand.builder()
                         .signature(new CommandSignature("public static SutFirstNameBuilder builder()"))
+                        .content(new CommandContent("return new SutBuilder();"))
+                        .scope(CommandScope.CLASS)
+                        .type(TargetType.METHOD));
+    }
+
+    @Test
+    void shouldCreateBuilderMethodWithAllOptionalParam() {
+        builder.generateBuilder(classWithTwoOptionalParameter());
+
+        verify(builderPort).generateBuilder(commandOutput.capture());
+        assertThat(commandOutput.getValue().commands()).contains(
+                CreateCommand.builder()
+                        .signature(new CommandSignature("public static SutOptionalBuilder builder()"))
                         .content(new CommandContent("return new SutBuilder();"))
                         .scope(CommandScope.CLASS)
                         .type(TargetType.METHOD));

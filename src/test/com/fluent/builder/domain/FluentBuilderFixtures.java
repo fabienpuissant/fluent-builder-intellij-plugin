@@ -205,4 +205,21 @@ public class FluentBuilderFixtures {
                         .isOptional(false))));
     }
 
+    static FluentBuilderParameters classWithTwoOptionalParameter() {
+        return FluentBuilderParameters.builder()
+                .context(ExistingClass.builder()
+                        .className(CLASS_NAME)
+                        .isBuilderExist(false)
+                        .interfaces(List.of())
+                        .classMethods(List.of()))
+                .parameters(new Fields(List.of(Field.builder()
+                                .name("firstName")
+                                .type("String")
+                                .isOptional(true),
+                        Field.builder()
+                                .name("lastName")
+                                .type("String")
+                                .isOptional(true))));
+    }
+
 }
