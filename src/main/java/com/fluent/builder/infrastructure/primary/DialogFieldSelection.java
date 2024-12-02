@@ -1,6 +1,7 @@
 package com.fluent.builder.infrastructure.primary;
 
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.lang.jvm.JvmModifier;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
@@ -10,6 +11,8 @@ import com.intellij.ui.components.JBList;
 
 import javax.swing.*;
 
+import java.util.Arrays;
+
 import static com.intellij.openapi.ui.LabeledComponent.create;
 import static com.intellij.ui.ToolbarDecorator.createDecorator;
 
@@ -17,12 +20,12 @@ import static com.intellij.ui.ToolbarDecorator.createDecorator;
  * Credit <a href="https://github.com/Powershooter83/SealedFluentBuilder/blob/main/src/main/java/me/prouge/sealedfluentbuilder/panels/FieldSelectionPanel.java">...</a>
  */
 
-public class DialogFileSelection extends DialogWrapper {
+public class DialogFieldSelection extends DialogWrapper {
 
     final PluginContext context;
     private final JBList<PsiField> fieldList;
 
-    public DialogFileSelection(final PluginContext context) {
+    public DialogFieldSelection(final PluginContext context) {
         super(context.ownerClass().getProject());
 
         this.context = context;
@@ -47,7 +50,9 @@ public class DialogFileSelection extends DialogWrapper {
     }
 
     private JBList<PsiField> loadClassFields(final PsiClass ownerClass) {
-        CollectionListModel<PsiField> fields = new CollectionListModel<>(ownerClass.getFields());
+        CollectionListModel<PsiField> fields = new CollectionListModel<>(Arrays.stream(ownerClass.getFields()).filter(
+                psiField -> !psiField.hasModifier(JvmModifier.STATIC)
+        ).toList());
         JBList<PsiField> fieldsList = new JBList<>(fields);
         fieldsList.setCellRenderer(new DefaultPsiElementCellRenderer());
         return fieldsList;

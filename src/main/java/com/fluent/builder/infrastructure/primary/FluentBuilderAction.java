@@ -37,7 +37,7 @@ public class FluentBuilderAction extends AnAction {
         }
         psiClassService.setPsiClass(psiClass);
 
-        DialogFileSelection dialog = new DialogFileSelection(new PluginContext(project, editor, psiClass));
+        DialogFieldSelection dialog = new DialogFieldSelection(new PluginContext(project, editor, psiClass));
         dialog.show();
     }
 }
