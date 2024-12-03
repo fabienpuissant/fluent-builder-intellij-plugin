@@ -1,6 +1,7 @@
 package com.fluent.builder.infrastructure.primary;
 
 import com.fluent.builder.application.FluentBuilderApplicationService;
+import com.fluent.builder.icons.FluentBuilderIcon;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -8,6 +9,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiField;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.IconUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -73,7 +75,7 @@ public class DialogFieldArrangement extends DialogWrapper {
         panel.add(Box.createVerticalStrut(10));
 
         panel.add(createToolbar(fieldList)
-                .addExtraAction(new AnAction(Message.MOVE_DOWN.label()) {
+                .addExtraAction(new AnAction(Message.MOVE_DOWN.label(), Message.MOVE_DOWN.label(), FluentBuilderIcon.MoveDown) {
                     @Override
                     public void actionPerformed(@NotNull AnActionEvent e) {
                         moveFields(fieldList, fieldListModel, optionalFieldListModel);
@@ -85,7 +87,7 @@ public class DialogFieldArrangement extends DialogWrapper {
         panel.add(Box.createVerticalStrut(10));
 
         panel.add(createToolbar(optionalFieldList)
-                .addExtraAction(new AnAction(Message.MOVE_UP.label()) {
+                .addExtraAction(new AnAction(Message.MOVE_UP.label(), Message.MOVE_UP.label(), FluentBuilderIcon.MoveUp) {
                     @Override
                     public void actionPerformed(@NotNull AnActionEvent e) {
                         moveFields(optionalFieldList, optionalFieldListModel, fieldListModel);
