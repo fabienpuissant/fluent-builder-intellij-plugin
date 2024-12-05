@@ -9,17 +9,18 @@ The **IntelliJ Fluent Builder Plugin** is your go-to solution for generating and
 
 2. **Highly Adaptable Builders**  
    Customize your builder to fit your exact needs:
-    - Modify parameter types or names.
-    - Remove parameters to simplify your builder.
-    - Make parameters optional to suit different use cases.
-    - Reorder parameters for better readability and usability.  
-      The plugin automatically adjusts the builder interfaces and methods to reflect your changes, ensuring a consistent and reliable builder.
+
+   - Modify parameter types or names.
+   - Remove parameters to simplify your builder.
+   - Make parameters optional to suit different use cases.
+   - Reorder parameters for better readability and usability.  
+     The plugin automatically adjusts the builder interfaces and methods to reflect your changes, ensuring a consistent and reliable builder.
 
 3. **Seamless Compatibility with Existing Code**  
    The plugin adheres to established naming conventions to ensure compatibility with your existing project:
-    - **Builder Class Names**: `ClassNameBuilder`
-    - **Builder Interface Names**: `ClassNameParamBuilder`  
-      This ensures that your generated builders integrate seamlessly into your current workflow.
+   - **Builder Class Names**: `ClassNameBuilder`
+   - **Builder Interface Names**: `ClassNameParamBuilder`  
+     This ensures that your generated builders integrate seamlessly into your current workflow.
 
 ## Hexagonal Architecture Support
 

@@ -1,0 +1,59 @@
+{
+  "actions": [
+    {
+      "module": "init",
+      "date": "2024-12-05T08:50:30.682968300Z",
+      "properties": {
+        "packageName": "io.fabienpuissant.fluent.builder",
+        "projectName": "Intellij java fluent builder",
+        "baseName": "intellijFluentBuilder",
+        "endOfLine": "lf",
+        "indentSize": 2
+      }
+    },
+    {
+      "module": "gradle-java",
+      "date": "2024-12-05T08:50:30.780966100Z",
+      "properties": {
+        "packageName": "io.fabienpuissant.fluent.builder",
+        "projectName": "Intellij java fluent builder",
+        "baseName": "intellijFluentBuilder",
+        "endOfLine": "lf",
+        "indentSize": 2
+      }
+    },
+    {
+      "module": "prettier",
+      "date": "2024-12-05T08:50:30.823966800Z",
+      "properties": {
+        "packageName": "io.fabienpuissant.fluent.builder",
+        "projectName": "Intellij java fluent builder",
+        "baseName": "intellijFluentBuilder",
+        "endOfLine": "lf",
+        "indentSize": 2
+      }
+    },
+    {
+      "module": "checkstyle",
+      "date": "2024-12-05T08:50:30.866533900Z",
+      "properties": {
+        "packageName": "io.fabienpuissant.fluent.builder",
+        "projectName": "Intellij java fluent builder",
+        "baseName": "intellijFluentBuilder",
+        "endOfLine": "lf",
+        "indentSize": 2
+      }
+    },
+    {
+      "module": "github-actions-gradle",
+      "date": "2024-12-05T08:50:30.888184600Z",
+      "properties": {
+        "packageName": "io.fabienpuissant.fluent.builder",
+        "projectName": "Intellij java fluent builder",
+        "baseName": "intellijFluentBuilder",
+        "endOfLine": "lf",
+        "indentSize": 2
+      }
+    }
+  ]
+}

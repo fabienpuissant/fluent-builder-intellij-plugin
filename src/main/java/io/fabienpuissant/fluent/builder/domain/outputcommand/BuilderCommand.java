@@ -1,9 +1,7 @@
 package io.fabienpuissant.fluent.builder.domain.outputcommand;
 
 public interface BuilderCommand {
+  CommandScope scope();
 
-    CommandScope scope();
-
-    TargetType type();
-
+  TargetType type();
 }

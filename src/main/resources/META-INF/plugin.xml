@@ -1,21 +1,22 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>com.fluent.builder.fluent-builder</id>
+  <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+  <id>com.fluent.builder.fluent-builder</id>
 
-    <version>1.0.1</version>
+  <version>1.0.1</version>
 
-    <!-- Public plugin name should be written in Title Case.
+  <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Fluent Builder</name>
+  <name>Fluent Builder</name>
 
-    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="fabienpuissant9@gmail.com">Fabien Puissant</vendor>
+  <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="fabienpuissant9@gmail.com">Fabien Puissant</vendor>
 
-    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+  <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description><![CDATA[
+  <description
+  ><![CDATA[
     <body>
     <p>The <strong>IntelliJ Fluent Builder Plugin</strong> is your go-to solution for generating and managing fluent builders in Java projects.</p>
 
@@ -45,27 +46,31 @@
     </body>
   ]]></description>
 
-    <!-- Product and plugin compatibility requirements.
+  <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
 
-    <!-- Extension points defined by the plugin.
+  <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService
-                serviceInterface="io.fabienpuissant.fluent.builder.infrastructure.secondary.PsiClassService"
-                serviceImplementation="io.fabienpuissant.fluent.builder.infrastructure.secondary.PsiClassServiceImpl"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService
+      serviceInterface="io.fabienpuissant.fluent.builder.infrastructure.secondary.PsiClassService"
+      serviceImplementation="io.fabienpuissant.fluent.builder.infrastructure.secondary.PsiClassServiceImpl"
+    />
+  </extensions>
 
-    <depends>com.intellij.java</depends>
+  <depends>com.intellij.java</depends>
 
-
-    <actions>
-        <action id="FluentBuilderAction" class="io.fabienpuissant.fluent.builder.infrastructure.primary.FluentBuilderAction"
-                text="Fluent Builder" description="Generate a Fluent Builder">
-            <add-to-group group-id="GenerateGroup" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt shift B"/>
-        </action>
-    </actions>
+  <actions>
+    <action
+      id="FluentBuilderAction"
+      class="io.fabienpuissant.fluent.builder.infrastructure.primary.FluentBuilderAction"
+      text="Fluent Builder"
+      description="Generate a Fluent Builder"
+    >
+      <add-to-group group-id="GenerateGroup" anchor="last" />
+      <keyboard-shortcut keymap="$default" first-keystroke="alt shift B" />
+    </action>
+  </actions>
 </idea-plugin>
