@@ -20,6 +20,14 @@ checkstyle {
     toolVersion = libs.versions.checkstyle.get()
 }
 
+intellijPlatform {
+  pluginConfiguration {
+    ideaVersion {
+      untilBuild = provider { null }
+    }
+  }
+}
+
 // jhipster-needle-gradle-plugins-configurations
 
 repositories {

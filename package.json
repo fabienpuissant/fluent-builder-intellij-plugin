@@ -1,6 +1,6 @@
 {
   "name": "intellij-fluent-builder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Intellij java fluent builder",
   "license": "Apache-2.0",
